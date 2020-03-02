@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.UserDao">
+    <insert id="insertUser" parameterType="com.gdufs.demo.entity.User">
+        INSERT INTO
+        cc_users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            username, real_name,pwd,school,gender,
+            <if test="openId !=null">
+                open_id,
+            </if>
+            <if test="phone !=null">
+                phone,
+            </if>
+            <if test="adminType !=null">
+                admin_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{userName},#{realName}, #{pwd},#{school},#{gender},
+            <if test="openId !=null">
+                #{openId},
+            </if>
+            <if test="phone !=null">
+                #{phone},
+            </if>
+            <if test="adminType !=null">
+                #{adminType},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryUser" resultType="com.gdufs.demo.entity.UserBase" parameterType="String">
+        SELECT username,real_name,phone,points,admin_type,admin_note,gender,school from
+        cc_users where
+        username=#{userName}
+        limit 1
+    </select>
+
+    <select id="queryUserAllInfo" resultType="com.gdufs.demo.entity.User" parameterType="String">
+        SELECT * from
+        cc_users where
+        username=#{userName}
+        limit 1
+    </select>
+
+    <select id="getUserOpenId" resultType="String" parameterType="String">
+        SELECT open_id from
+        cc_users where
+        username=#{userName}
+        limit 1
+    </select>
+
+    <select id="getAdminUsers" resultType="com.gdufs.demo.entity.User">
+        SELECT username,real_name,admin_type,admin_note from
+        cc_users where
+        admin_type in (1,2)
+    </select>
+
+    <select id="queryPhoneExist" resultType="String">
+        SELECT phone from
+        cc_users where
+        phone=#{phone}
+        limit 1
+    </select>
+
+    //数据库的操作
+    <select id="queryOpenId" resultType="String">
+        SELECT username from
+        cc_users where
+        open_id=#{openId}
+        limit 1
+    </select>
+
+    <update id="updateUserPhone" parameterType="String">
+        update cc_users
+        <set>
+            <if test="phone !=null">phone=#{phone},</if>
+        </set>
+        where username=#{userName}
+    </update>
+    <update id="updateAdminUser" parameterType="String">
+        update cc_users
+        <set>
+            <if test="adminType !=null">admin_type=#{adminType},</if>
+            <if test="adminNote !=null">admin_note=#{adminNote},</if>
+        </set>
+        where username=#{userName}
+    </update>
+    <update id="updatePoints" parameterType="String">
+        update cc_users
+        <set>
+            <if test="score !=null">points=#{score}+points,</if>
+        </set>
+        where username=#{userName}
+    </update>
+
+    <update id="updateOpenId" parameterType="String">
+        update cc_users
+        <set>
+            <if test="openId !=null">open_id=#{openId},</if>
+        </set>
+        where username=#{username}
+    </update>
+
+    <update id="updateUserPwd" parameterType="String">
+        update cc_users
+        <set>
+            <if test="newPwd !=null">pwd=#{newPwd},</if>
+        </set>
+        where username=#{username}
+    </update>
+</mapper>

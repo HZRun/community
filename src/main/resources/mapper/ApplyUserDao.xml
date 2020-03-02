@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.ApplyUserDao">
+    <insert id="insertApplyUser" useGeneratedKeys="true" keyProperty="applyId"
+            keyColumn="apply_id" parameterType="com.gdufs.demo.entity.Relation">
+        INSERT INTO
+        cc_apply_user(username,apply_id)
+        VALUES
+        (#{username},#{applyId})
+    </insert>
+    <update id="updateUserStatus" parameterType="com.gdufs.demo.entity.Relation">
+        update cc_apply_user
+        <set>
+            <if test="Status !=null">status=#{Status},</if>
+        </set>
+        where apply_id=#{applyId} and username=#{username}
+    </update>
+    <update id="updateStatus">
+        update cc_apply_user
+        <set>
+            <if test="status !=null">status=#{status},</if>
+        </set>
+        where apply_id=#{applyId} and username=#{username}
+    </update>
+    <select id="queryApplyUserByApplyId" resultType="com.gdufs.demo.entity.Relation">
+        SELECT apply_id, username,status
+        FROM cc_apply_user
+        WHERE apply_id=#{applyId}
+    </select>
+
+
+    <delete id="deleteAreaApplyUser">
+        delete from
+        cc_apply_user
+        where
+        apply_id=#{applyId} and username=#{username}
+    </delete>
+    <select id="queryAreaApplyUserExist" resultType="com.gdufs.demo.entity.Relation">
+        SELECT apply_id, username,status
+        FROM cc_apply_user
+        WHERE
+        apply_id=#{applyId} and username=#{username}
+    </select>
+
+
+    <select id="queryApplyUserByUsername" resultType="com.gdufs.demo.entity.AreaApply">
+        SELECT ap.apply_id, ap.start_time, ap.end_time, sponsor,introduce,apply_area,
+        admin1_status,admin2_status,admin1_advice,admin2_advice
+        FROM cc_application ap
+        JOIN
+        cc_apply_user au
+        ON ap.apply_id=au.apply_id
+        and au.username=#{username}
+    </select>
+
+</mapper>

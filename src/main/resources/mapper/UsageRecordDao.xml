@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.UsageRecordDao">
+    <insert id="insertUsageRecord" parameterType="com.gdufs.demo.entity.UsageRecord">
+        INSERT INTO
+        cc_area_usage(area_id,day,apply_id,type,start_time_index,end_time_index,admin_user)
+        VALUES
+        (#{areaId},#{day}, #{applyId},#{type},#{startTimeIndex},#{endTimeIndex},#{adminUser})
+    </insert>
+
+    <delete id="removeUsageRecord">
+        DELETE FROM
+        cc_area_usage
+        WHERE
+        apply_id=#{applyId} and type=#{type}
+    </delete>
+</mapper>

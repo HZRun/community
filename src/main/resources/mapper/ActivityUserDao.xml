@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.ActivityUserDao">
+    <insert id="insertActivityUser" useGeneratedKeys="true" keyProperty="applyId"
+            keyColumn="apply_id" parameterType="com.gdufs.demo.entity.Relation">
+        INSERT INTO
+        cc_activity_user(username,activity_id)
+        VALUES
+        (#{username},#{applyId})
+    </insert>
+    <select id="queryActivityUserByApplyId" resultType="com.gdufs.demo.entity.Relation">
+        SELECT activity_id, username,status
+        FROM cc_activity_user
+        WHERE activity_id=#{applyId}
+    </select>
+    <delete id="deleteActivityUser">
+        delete from
+        cc_activity_user
+        where
+        activity_id=#{applyId} and username=#{username}
+    </delete>
+    <select id="queryActivityUserExist" resultType="com.gdufs.demo.entity.Relation">
+        SELECT activity_id, username,status
+        FROM cc_activity_user
+        WHERE
+        activity_id=#{applyId} and username=#{username}
+    </select>
+
+    <select id="queryActivityUserByUsername" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT ac.activity_id, start_time, title, end_time, sponsor,introduce,apply_area,members_less
+        admin1_status,admin2_status,admin1_advice,admin2_advice,activity_status,thumbnail, enroll_time
+        FROM cc_activity ac
+        JOIN
+        cc_activity_user au
+        ON ac.activity_id=au.activity_id and au.username=#{username}
+    </select>
+
+</mapper>

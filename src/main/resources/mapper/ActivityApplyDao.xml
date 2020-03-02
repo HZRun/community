@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.ActivityApplyDao">
+    <insert id="insertActivityApply" useGeneratedKeys="true" keyProperty="activityId"
+            parameterType="com.gdufs.demo.entity.ActivityApply">
+        INSERT INTO cc_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            start_time,end_time,apply_user,sponsor,title,introduce,apply_area,members_less,thumbnail,full_image,create_time,enroll_time,
+            <if test="admin2Status !=null">
+                admin2_status,
+            </if>
+            <if test="admin2Name !=null">
+                admin2_name,
+            </if>
+            <if test="admin1Status !=null">
+                admin1_status,
+            </if>
+            <if test="admin1Name !=null">
+                admin1_name
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{startTime},#{endTime},#{applyUser},#{sponsor},#{title},#{introduce},#{applyArea},#{membersLess},#{thumbnail},#{fullImage},#{createTime},#{enrollTime},
+            <if test="admin2Status !=null">
+                #{admin2Status},
+            </if>
+            <if test="admin2Name !=null">
+                #{admin2Name},
+            </if>
+            <if test="admin1Status !=null">
+                #{admin1Status},
+            </if>
+            <if test="admin1Name !=null">
+                #{admin1Name}
+            </if>
+        </trim>
+    </insert>
+    <select id="queryActivityApply" parameterType="map" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT activity_id, start_time, end_time,apply_user, sponsor,title,introduce,apply_area,members_less,
+        admin1_status,admin2_status,admin1_advice,admin2_advice,admin1_name,admin2_name,activity_status,thumbnail,enroll_time,create_time
+        FROM cc_activity
+        <where>
+            <if test="admin1Status!=null">
+                and admin1_status=#{admin1Status}
+            </if>
+            <if test="admin2Status!=null">
+                and admin2_status=#{admin2Status}
+            </if>
+            <if test="applyUser!=null">
+                and apply_user=#{applyUser}
+            </if>
+            <if test="activityStatus">
+                and activity_status=#{activityStatus}
+            </if>
+            <if test="nowTime!=null">
+                <![CDATA[   and DATE_FORMAT(end_time, '%Y-%m-%d %H:%i:%s')>=  DATE_FORMAT(#{nowTime}, '%Y-%m-%d %H:%i:%s')   ]]>
+            </if>
+        </where>
+        ORDER BY create_time
+    </select>
+    <select id="queryActivityApplyById" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT activity_id, start_time, end_time,apply_user, sponsor,title,introduce,apply_area,members_less,
+        admin1_status,admin2_status,admin1_advice,admin2_advice,admin1_name,admin2_name,activity_status,thumbnail,enroll_time
+        FROM cc_activity
+        WHERE activity_id=#{activityId}
+    </select>
+
+    <select id="queryMyApplyActivity" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT activity_id, start_time, end_time,apply_user, sponsor,title,introduce,apply_area,members_less,
+        admin1_status,admin2_status,admin1_advice,admin2_advice,admin1_name,admin2_name,activity_status,thumbnail,enroll_time
+        FROM cc_activity
+        WHERE apply_user=#{username}
+        order BY start_time
+        DESC
+    </select>
+
+    <select id="queryOfficeApply" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT activity_id, start_time, end_time,apply_user, sponsor,title,introduce,apply_area,members_less,
+        admin1_status,admin2_status,admin1_advice,admin2_advice,admin1_name,admin2_name,activity_status,thumbnail,enroll_time
+        FROM cc_activity
+        <where>
+            <if test="param2 !=null">
+                <![CDATA[   and DATE_FORMAT(end_time, '%Y-%m-%d %H:%i:%s')>=  DATE_FORMAT(#{param2}, '%Y-%m-%d %H:%i:%s')   ]]>
+            </if>
+            and admin2_status=#{admin2Status}
+            and sponsor="学生处"
+        </where>
+        ORDER BY start_time
+        DESC
+    </select>
+
+    <select id="queryEnrollApply" resultType="com.gdufs.demo.entity.ActivityApply">
+        SELECT activity_id, start_time, end_time,apply_user, sponsor,title,introduce,apply_area,members_less,
+        admin1_status,admin2_status,admin1_advice,admin2_advice,admin1_name,admin2_name,activity_status,thumbnail,enroll_time
+        FROM cc_activity
+        <where>
+            <if test="date !=null">
+                <![CDATA[   and DATE_FORMAT(enroll_time, '%Y-%m-%d %H:%i:%s')>=  DATE_FORMAT(#{date}, '%Y-%m-%d %H:%i:%s')   ]]>
+            </if>
+            and admin2_status=1
+            and activity_status=0
+        </where>
+        ORDER BY start_time
+    </select>
+    <update id="updateApplyStatus" parameterType="com.gdufs.demo.entity.ActivityApply">
+        update cc_activity
+        <set>
+            <if test="admin1Status !=null">admin1_status=#{admin1Status},</if>
+            <if test="admin2Status !=null">admin2_status=#{admin2Status},</if>
+            <if test="admin1Advice !=null">admin1_advice=#{admin1Advice},</if>
+            <if test="admin2Advice !=null">admin2_advice=#{admin2Advice},</if>
+            <if test="admin1Name !=null">admin1_name=#{admin1Name},</if>
+            <if test="admin2Name !=null">admin2_name=#{admin2Name},</if>
+            <if test="activityStatus !=null">activity_status=#{activityStatus},</if>
+        </set>
+        where activity_id=#{activityId}
+    </update>
+    <select id="getFullImageById" resultType="String">
+        SELECT full_image
+        FROM cc_activity
+        WHERE activity_id=#{activityId}
+    </select>
+
+    <insert id="insertActivityComment" useGeneratedKeys="true"
+            parameterType="com.gdufs.demo.entity.ActivityComment">
+        INSERT INTO
+        cc_activity_feedback(activity_id,username,content_score,organize_score,use_score,content,create_time)
+        VALUES
+        (#{activityId},#{username},#{contentScore},#{organizeScore},#{useScore},#{content},#{createTime})
+    </insert>
+    <select id="queryActivityComment" resultType="com.gdufs.demo.entity.ActivityComment">
+        SELECT id,activity_id,username,content_score,organize_score,use_score,content,create_time
+        FROM cc_activity_feedback
+        ORDER BY create_time
+        DESC
+    </select>
+
+    <delete id="deleteActivityApply">
+        DELETE FROM
+        cc_activity
+        WHERE
+        activity_id=#{activityId}
+    </delete>
+
+    <select id="getActivityAverageScore" resultType="com.gdufs.demo.entity.AverageScoreEntity">
+        select avg(organize_score) as organize_score,avg(content_score) as content_score
+        from
+        cc_activity_feedback
+        where activity_id=#{activityId}
+    </select>
+</mapper>

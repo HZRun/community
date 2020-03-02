@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.AreaDao">
+    <select id="queryArea" resultType="com.gdufs.demo.entity.Area">
+        SELECT area_id, area_name,area_capacity
+        FROM cc_areas
+    </select>
+    <select id="queryAreaById" resultType="com.gdufs.demo.entity.Area">
+        SELECT area_id, area_name,area_capacity
+        FROM cc_areas
+        where
+        area_id=#{areaId}
+    </select>
+    <insert id="insertArea" useGeneratedKeys="true" keyProperty="areaId"
+            keyColumn="area_id" parameterType="com.gdufs.demo.entity.Area">
+        INSERT INTO
+        cc_areas(area_id,area_name,area_capacity)
+        VALUES
+        (#{areaId},#{areaName},#{areaCapacity})
+    </insert>
+</mapper>

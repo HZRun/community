@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdufs.demo.dao.AreaApplyDao">
+    <insert id="insertAreaApply" useGeneratedKeys="true" keyProperty="applyId"
+            keyColumn="apply_id" parameterType="com.gdufs.demo.entity.AreaApply">
+        INSERT INTO
+        cc_application(start_time,end_time,apply_user,sponsor,introduce,apply_area,create_time)
+        VALUES
+        (#{startTime},#{endTime},#{applyUser},#{sponsor},#{introduce},#{applyArea},#{createTime})
+    </insert>
+    <select id="queryAreaApply" parameterType="map" resultType="com.gdufs.demo.entity.AreaApply">
+        SELECT apply_id, start_time, end_time, sponsor,introduce,apply_area,apply_user,
+        admin1_status,admin2_status,admin1_name,admin2_name,admin1_advice,admin2_advice
+        FROM cc_application
+        <where>
+            <if test="admin1Status!=null">
+                and admin1_status=#{admin1Status}
+            </if>
+            <if test="admin2Status!=null">
+                and admin2_status=#{admin2Status}
+            </if>
+            <if test="applyUser!=null">
+                and apply_user=#{applyUser}
+            </if>
+            <if test="nowTime!=null">
+                <![CDATA[   and DATE_FORMAT(start_time, '%Y-%m-%d %H:%i:%s')>=  DATE_FORMAT(#{nowTime}, '%Y-%m-%d %H:%i:%s')   ]]>
+            </if>
+        </where>
+        ORDER BY create_time
+        DESC
+    </select>
+    <select id="queryAreaApplyById" resultType="com.gdufs.demo.entity.AreaApply">
+        SELECT apply_id, start_time, end_time, sponsor,introduce,apply_area,apply_user,
+        admin1_status,admin2_status,admin1_name,admin2_name,admin1_advice,admin2_advice
+        FROM cc_application
+        WHERE apply_id=#{applyId}
+    </select>
+
+    <select id="queryMyApplyArea" resultType="com.gdufs.demo.entity.AreaApply">
+        SELECT apply_id, start_time, end_time, sponsor,introduce,apply_area,apply_user,
+        admin1_status,admin2_status,admin1_name,admin2_name,admin1_advice,admin2_advice
+        FROM cc_application
+        WHERE apply_user=#{username}
+        ORDER BY start_time
+        DESC
+    </select>
+
+    <update id="updateApplyStatus" parameterType="com.gdufs.demo.entity.AreaApply">
+        update cc_application
+        <set>
+            <if test="admin1Status !=null">admin1_status=#{admin1Status},</if>
+            <if test="admin2Status !=null">admin2_status=#{admin2Status},</if>
+            <if test="admin1Advice !=null">admin1_advice=#{admin1Advice},</if>
+            <if test="admin2Advice !=null">admin2_advice=#{admin2Advice},</if>
+            <if test="admin1Name !=null">admin1_name=#{admin1Name},</if>
+            <if test="admin2Name !=null">admin2_name=#{admin2Name},</if>
+        </set>
+        where apply_id=#{applyId}
+    </update>
+
+    <delete id="deleteAreaApply">
+        DELETE FROM
+        cc_application
+        WHERE
+        apply_id=#{applyId}
+    </delete>
+
+    <insert id="insertApplyComment" useGeneratedKeys="true"
+            parameterType="com.gdufs.demo.entity.ApplyComment">
+        INSERT INTO
+        cc_apply_feedback(apply_id,username,content_score,organize_score,use_score,content,create_time)
+        VALUES
+        (#{applyId},#{username},#{contentScore},#{organizeScore},#{useScore},#{content},#{createTime})
+    </insert>
+    <select id="queryApplyComment" resultType="com.gdufs.demo.entity.ApplyComment">
+        SELECT id,apply_id,username,content_score,organize_score,use_score,content,create_time
+        FROM cc_apply_feedback
+        ORDER BY create_time
+        DESC
+    </select>
+
+</mapper>
